@@ -1,5 +1,5 @@
 const recipients = {
-    'prospect' :['muhammedmamz18@gmail.com','hafizahmed0303@gmail.com'],
+    'prospect' :['suraj@edize.in'],
     'appointment' :['suraj@edize.in'],
     'kdm':['suraj@edize.in'],
     'product-presentation':['suraj@edize.in'],
