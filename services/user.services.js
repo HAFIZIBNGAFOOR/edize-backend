@@ -14,7 +14,6 @@ export const doSignup = async ({
     }
 })=>{
     if(!first_name){
-        console.log(first_name,' firstname false');
         throw {
             status:400,
             message:'First name is required'
@@ -65,7 +64,6 @@ export const doSignup = async ({
         }if(userExist.phone == phone){
             message ='Entered phone already exists'
         }
-        console.log(message,' message from userexist');
         throw{
             status :400,
             message
@@ -110,7 +108,6 @@ export const doLogin = async ({
     if(!isPasswordCorrect){
         throw { status:400, message:" Incorrect password"}
     }
-    console.log(user);
     const tokens = generateTokens({id:user._id,roleId:user.role})
     return tokens
 }
@@ -120,13 +117,12 @@ export const verifyUser = async({
         userId
     }
 })=>{
-    console.log(userId,' user id inside verify ')
     const updateUser = await User.updateOne({_id:userId},{
         $set:{
            isVerified:true 
         }
     })
-    const toVerifyUser = await User.find({isVerified:false})
+    const toVerifyUser = await User.find({isVerified:false,role:'User'})
     if(toVerifyUser){
         return toVerifyUser
     }else{
@@ -138,7 +134,7 @@ export const verifyUser = async({
 }
 
 export const toVerifyUser = async()=>{
-    const toVerifyUser = await User.find({isVerified:false})
+    const toVerifyUser = await User.find({isVerified:false,role:'User'})
     if(toVerifyUser){
         return toVerifyUser
     }else{
@@ -198,3 +194,32 @@ export const putProfile = async({
     const userProfile = await User.findById(userId);
     return userProfile
 }
+
+export const allUsers = async()=>{
+    const allUsers = await User.find({role:"User"})
+    if(allUsers && allUsers.length>0){
+        return allUsers
+    }else{
+        throw{
+            status:400,
+            message:"No Users Available"
+        }
+    }
+}
+
+export const getUser =async({
+    query:{
+        userId
+    }
+})=>{
+    const user = await User.findById(userId,);
+    if(user){
+        return user
+    }else{
+        throw{
+            status:400,
+            message:'No User Found '
+        }
+    }
+}   
+

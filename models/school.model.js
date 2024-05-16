@@ -1,9 +1,15 @@
 import mongoose from "mongoose"
+import mongoose_Sequence from "mongoose-sequence"
 
+const AutoIncrementFactory =  mongoose_Sequence(mongoose)
 const SchoolSchema = new mongoose.Schema({
     status:{
         type:String,
         required:true
+    },
+    SchoolId: {
+        type: Number,
+        unique: true
     },
     name:{
         required:true,
@@ -100,5 +106,8 @@ const SchoolSchema = new mongoose.Schema({
     }
 },
 {timestamps:true,timeseries:true} )
+
+
+SchoolSchema.plugin(AutoIncrementFactory, { inc_field: 'SchoolId', start_seq: 101 });
 
 export const School = mongoose.model('School',SchoolSchema)

@@ -2,14 +2,24 @@ import { School } from "../models/school.model.js";
 
 export const dashboardData = async({
     user:{
-        userId
+        userId,
+        roleId
+    },
+    query:{
+      user
     }
 })=>{
-    console.log(userId,' this is the user');
-    const totalSchools = await School.countDocuments({userId});
-    const lostSchools = await School.countDocuments({userId,lost:true});
-    const hotLead = await School.countDocuments({userId,lead:true})
-    console.log(totalSchools, lostSchools, hotLead);
+    let totalSchools, lostSchools, hotLead ;
+    if(roleId ==='User' && userId){
+       totalSchools = await School.countDocuments({userId});
+       lostSchools = await School.countDocuments({userId,lost:true});
+       hotLead = await School.countDocuments({userId,lead:true})
+    }
+    if(user){
+      totalSchools = await School.countDocuments({userId:user})
+      lostSchools = await School.countDocuments({userId:user,lost:true});
+      hotLead = await School.countDocuments({userId:user,lead:true})
+    }
     if(totalSchools!==undefined && lostSchools!==undefined && hotLead!==undefined){
         return {
             totalSchools,
@@ -49,16 +59,23 @@ export const adminDashboard = async()=>{
           $project: {
             _id: 0,
             userId: "$_id",
-            username: "$user.username",
+            username: "$user.first_name",
             totalSchools: 1,
             leadTrueCount: 1,
             lostTrueCount: 1
           }
         }
       ]);
-      console.log(results);
+      const totalSchools = await School.countDocuments();
+      const lostSchools = await School.countDocuments({lost:true});
+      const hotLead = await School.countDocuments({lead:true})
     if(results){
-        return results
+        return {
+          results,
+          totalSchools,
+          lostSchools,
+          hotLead
+        }
     }else{
         throw{
             status:400,
