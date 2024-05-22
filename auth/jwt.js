@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken"
-
-
+// import dote
 export const jwtSign = (payload, expiresIn, type)=>{
     const types = {
         refresh:"JWT_SECRET_REFRESH",
@@ -13,6 +12,7 @@ export const jwtSign = (payload, expiresIn, type)=>{
 }
 export const jwtVerifyCommon = (token, key)=>{
     try {
+        console.log(key,'tokeeeeeeeeeeeennnnn' ,token);
         return jwt.verify(token, key)
     } catch (error) {
         console.log(error);
@@ -20,6 +20,7 @@ export const jwtVerifyCommon = (token, key)=>{
     }
 }
 export const jwtVerify = (accessToken)=>{
+    console.log(process.env.JWT_SECRET_ACCESS,' jwt verify');
     return jwtVerifyCommon(accessToken,process.env.JWT_SECRET_ACCESS)
 }
 

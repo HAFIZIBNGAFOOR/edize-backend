@@ -367,7 +367,7 @@ export const lostSchool = async ({
     )
     const details = await School.findById(schoolId)
     const user = await User.findById(userId)
-    const sendingMail = await sendMail('contract-signed', lostEmailTemplate(details, details.name, user.first_name))
+    const sendingMail = await sendMail('lost', lostEmailTemplate(details, details.name, user.first_name))
     if (updateSchool && sendingMail.isSend) {
         return true
     } else throw {
