@@ -9,11 +9,11 @@ const recipients = {
     'contract-signed':['suraj@edize.in','sarath@edize.in','nisam@edize.in'],
     'lost':['suraj@edize.in','sarath@edize.in']
 }
- import dotenv from "dotenv";
+import dotenv from "dotenv";
 import mailTransporter from "../config/nodemailer.config.js";
+dotenv.config()
 
- dotenv.config()
-
+console.log();
 export const sendMail = async(status,html)=>{
     return new Promise((resolve,reject)=>{
         console.log(status,' this is resipients ', recipients[status]);

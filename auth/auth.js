@@ -7,12 +7,10 @@ const auth = (isAuthorised = true)=>
             return res.status(401).send({message:'Token is required'})
         }
         const isVerified = jwtVerify(accessToken);
-        console.log(isVerified,'is verified');
         if(!isVerified && isAuthorised){
             return res.status(401).send({message:'Unauthorized'})
         }
         req.user = {...isVerified,accessToken}
-        console.log(req.user, ' req user in auth');
         _next()
     }
 
