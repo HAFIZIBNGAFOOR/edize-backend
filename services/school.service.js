@@ -10,6 +10,7 @@ import { proposalSignedEmailTemplate } from "../mail_templates/proposal_signed.t
 import { parentOrientationEmailTemplate } from "../mail_templates/parent_orientation_template.js";
 import { contractSignedEmailTemplate } from "../mail_templates/contract_signed_template.js";
 import { lostEmailTemplate } from "../mail_templates/lost_template.js";
+import { uploadToS3 } from "./aws.service.js";
 
 export const addSchool = async ({
     user: {
@@ -82,7 +83,7 @@ export const addSchool = async ({
         };
     }
 
-    const school = await School.insertMany({
+    const school = await School.create({
         name: school_name,
         address: Address,
         district,
@@ -251,36 +252,58 @@ export const proposalSinged = async ({
         PO_Signed_By,
         Rate,
         parent_orientation_date,
-        file
-    }
+    },
+    file
 }) => {
     console.log(schoolId, PO_Signed_By,
         Rate,
         parent_orientation_date,
         file);
 
-    const updateSchool = await School.findByIdAndUpdate(
-        { _id: schoolId }, {
-        $set: {
-            PO_signedBy: PO_Signed_By,
-            Parent_Orientation_Date: parent_orientation_date,
-            Rate,
-            PO_scan_copy: file,
-            status: 'proposal-signed'
+    if(file){
+        try {
+            const url = await uploadToS3(file);
+            console.log(url,' urlllllllleeeee');
+            if(url){
+                const updateSchool = await School.findByIdAndUpdate(
+                    { _id: schoolId }, {
+                    $set: {
+                        PO_signedBy: PO_Signed_By,
+                        Parent_Orientation_Date: parent_orientation_date,
+                        Rate,
+                        PO_scan_copy: url,
+                        status: 'proposal-signed'
+                    }
+                },
+                    { new: true }
+                )
+            
+                const details = await School.findById(schoolId)
+                const user = await User.findById(userId)
+                const sendingMail = await sendMail('proposal-signed', proposalSignedEmailTemplate(details, details.name, user.first_name))
+                if (updateSchool && sendingMail.isSend) {
+                    return true
+                } else throw {
+                    status: 404,
+                    message: 'Error occured while saving data'
+                }
+            }else {
+                throw{
+                    status:400,
+                    message:'Error uploading to bucket'
+                }
+            }
+        } catch (error) {
+            console.log(error,' iside file updalod to aws');
         }
-    },
-        { new: true }
-    )
-
-    const details = await School.findById(schoolId)
-    const user = await User.findById(userId)
-    const sendingMail = await sendMail('proposal-signed', proposalSignedEmailTemplate(details, details.name, user.first_name))
-    if (updateSchool && sendingMail.isSend) {
-        return true
-    } else throw {
-        status: 404,
-        message: 'Error occured while saving data'
-    }
+        
+    }else{
+        throw{
+            status:400,
+            message:'No file present'
+        } 
+    }   
+    
 }
 
 export const parentOrientation = async ({
@@ -413,7 +436,21 @@ export const getSchools = async ({
         }
 }
 
-
+export const getAllSchools = async({
+    user:{
+        userId,
+        roleId
+    }
+})=>{
+    if(roleId!=='Admin'){
+        const allSchools = await School.find({userId}) 
+        return allSchools
+    }else{
+        const allSchools = await School.find()
+        return allSchools
+    }
+    
+}
 
 export const singleSchool = async ({
     query: {

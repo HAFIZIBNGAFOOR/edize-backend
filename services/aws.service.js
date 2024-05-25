@@ -1,28 +1,32 @@
-
-import  {s3} from "../config/aws.config.js"
+import aws from "aws-sdk";
 import dotenv from "dotenv"
+
 dotenv.config()
 
-const region = process.env.AWS_REGION
-const accessKeyId =  process.env.AWS_ACCESS_KEY
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
-console.log(region,'regions', accessKeyId,'accessKeyId',secretAccessKey,'sercrt access key');
-
-
-
-export const getSignedUrl = async ({
-    query:{
-      fileName
+export const uploadToS3 = async(file)=>{
+  const s3Client = new aws.S3({
+    region:process.env.AWS_REGION,
+    credentials:{
+      accessKeyId:process.env.AWS_ACCESS_KEY,
+      secretAccessKey:process.env.AWS_SECRET_ACCESS_KEY
     }
-}) => {
-    const Bucket = process.env.AWS_S3_ASSETS_BUCKET;
-    const Key = fileName
-    const params=({
-      Bucket,
-      Key,
-      Expires:60
-    })
-    const signedUrl = await s3.getSignedUrlPromise("putObject",params);
-    console.log("signedUrl", signedUrl,Bucket);
-    return signedUrl;
-};
+  })
+  const filename = Date.now().toString()
+  const params = {
+    Bucket:process.env.AWS_S3_ASSETS_BUCKET,
+    Key: filename,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  }
+  try {
+    const url = `${process.env.AWS_CLIENT_URL}${filename}`
+    const response = await s3Client.upload(params).promise() 
+    return url
+
+  } catch (error) {
+    console.log(error,' error inside aws ');
+    throw {
+      message:'cannot upload file'
+    }
+  }
+}
