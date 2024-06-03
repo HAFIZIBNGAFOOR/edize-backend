@@ -22,11 +22,14 @@ export const productPresentationEmailTemplate = (details, schoolName, username) 
 <body>
     <h2>Subject: Product Presentation Done</h2>
     <p>${username} has Done Product Presentation with ${schoolName}. Here are the following details:</p>
+    <h3>Demo attended by :</h3.
     <ul>
-        ${details.participitated_members.map(participant => `
-            <li>${participant}</li>
-        `).join('')}
+     ${details.demo_attended_by.map(participant => `
+    <li>${participant}</li>
+    `).join('')}
     </ul>
+    <p>Demo done date: ${details.demo_done_date}</p>
+    <p>Further Requirment of acadmic detailed demo: ${details.further_requirement}</p>
     <p>Best Regards,</p>
     <p>${username}</p>
 </body>

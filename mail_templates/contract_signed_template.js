@@ -1,4 +1,4 @@
-export const contractSignedEmailTemplate = (schoolName, username) => `
+export const contractSignedEmailTemplate = (schoolName,kdmDetails, username) => `
 <html>
 <head>
     <style>
@@ -18,7 +18,11 @@ export const contractSignedEmailTemplate = (schoolName, username) => `
 </head>
 <body>
     <h2>Subject: Contract Signed</h2>
-    <p>${username} Completed Contract Signed with ${schoolName}</p>
+    <p>${username} Completed Contract Signed with ${schoolName}. Here are the following details:</p>
+    <ul>
+        <li><strong>On Boarding Meeting Date:</strong> ${kdmDetails.Boarding_meeting_date}</li>
+        <li><strong>On Boarding Students Count:</strong> ${kdmDetails.Boarding_student_count}</li>
+    </ul>
     <p>Best Regards,</p>
     <p>${username}</p>
 </body>

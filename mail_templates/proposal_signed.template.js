@@ -20,10 +20,16 @@ export const proposalSignedEmailTemplate = (details, schoolName, username) => `
     <h2>Subject: Proposal Signed</h2>
     <p>${username} Completed Proposal Signed with ${schoolName}. Here are the following details:</p>
     <ul>
-        <li><strong>PO Scan Copy:</strong> ${details.PO_scan_copy}</li>
-        <li><strong>Rate:</strong> ${details.Rate}</li>
-        <li><strong>PO Signed by:</strong> ${details.PO_signedBy}</li>
-        <li><strong>Parent Orientation Date:</strong> ${details.Parent_Orientation_Date}</li>
+        <li><strong>Price for Classed:</strong> ${details.Price_for_class}</li>
+        <li><strong>Total Deal Value Year 1:</strong> ${details.total_deal.year1}</li>
+        <li><strong>Total Deal Value Year 2:</strong> ${details.total_deal.year2}</li>
+        <li><strong>Total Deal Value Year 3:</strong> ${details.total_deal.year3}</li>
+    </ul>
+    <h4>Students Count for each class</h4>
+    <ul>
+     ${details.students_count.map(participant => `
+    <li>Class: ${participant.class}  Count: ${participant.count}</li>
+    `).join('')}
     </ul>
     <p>Best Regards,</p>
     <p>${username}</p>

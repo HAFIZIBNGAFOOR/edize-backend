@@ -21,6 +21,8 @@ export const parentOrientationEmailTemplate = (details, schoolName, username) =>
     <p>${username} Completed Parent Orientation with ${schoolName}. Here are the following details:</p>
     <ul>
         <li><strong>Parent Orientation Done Date:</strong> ${details.Parent_Orientation_Done_Date}</li>
+        <li><strong>Parent Orientation Done By:</strong> ${details.Parent_Orientation_Done_By}</li>
+        <li><strong>No of Parent Attended:</strong> ${details.Parents_attended}</li>
     </ul>
     <p>Best Regards,</p>
     <p>${username}</p>

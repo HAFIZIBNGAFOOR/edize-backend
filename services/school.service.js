@@ -11,6 +11,7 @@ import { parentOrientationEmailTemplate } from "../mail_templates/parent_orienta
 import { contractSignedEmailTemplate } from "../mail_templates/contract_signed_template.js";
 import { lostEmailTemplate } from "../mail_templates/lost_template.js";
 import { uploadToS3 } from "./aws.service.js";
+import { productDemoEmailTemplate } from "../mail_templates/product_demo.js";
 
 export const addSchool = async ({
     user: {
@@ -156,16 +157,32 @@ export const kdmMeeting = async ({
         Meeting_done_date,
         demoOption,
         Demo_schedule_date,
-        schoolId
+        schoolId,
+        smartClassRooms,
+        smartStudio,
+        schoolInternet
     }
 }) => {
     const demoB = Boolean(demoOption)
+    console.log(smartClassRooms,smartStudio,schoolInternet);
+
+    const facilities_available = []
+    if(smartClassRooms){
+        facilities_available.push('Smart Class Rooms')
+    }
+    if(smartStudio){
+        facilities_available.push('Smart Studio')
+    }
+    if(schoolInternet){
+        facilities_available.push('School Internet')
+    }
     const updateSchool = await School.findByIdAndUpdate(
         { _id: schoolId }, {
         $set: {
             KDM_Meeting_Done_Date: Meeting_done_date,
             demo: demoB,
             Demo_schedule_date,
+            facilities_available,
             status: 'kdm'
         }
     },
@@ -181,21 +198,52 @@ export const kdmMeeting = async ({
         message: 'Error occured while saving data'
     }
 }
-
+export const product_demo= async({
+    user: {
+        userId
+    },
+    body: {
+        support_required,
+        schoolId
+    }  
+})=>{ 
+    const updateSchool = await School.findByIdAndUpdate(
+        { _id: schoolId }, {
+        $set: {
+            support_required,
+            status: 'product-demo'
+        }
+    },
+        { new: true }
+    )
+    const kdmDetails = await School.findById(schoolId)
+    const user = await User.findById(userId)
+    const sendingMail = await sendMail('product-demo', productDemoEmailTemplate(kdmDetails, kdmDetails.name, user.first_name))
+    if (updateSchool && sendingMail.isSend) {
+        return true
+    } else throw {
+        status: 404,
+        message: 'Error occured while saving data'
+    }
+}
 export const product_presentation = async ({
     user: {
         userId
     },
     body: {
         participated_members,
-        schoolId
+        schoolId,
+        demo_done_date,
+        further_requirement
     }
 }) => {
-    const memberNames = participated_members.map(member => member.memberName);
+    console.log(participated_members,' sfmnedebooenononsnfd',demo_done_date)
     const updateSchool = await School.findByIdAndUpdate(
         { _id: schoolId }, {
         $set: {
-            participitated_members: memberNames,
+            demo_attended_by: participated_members,
+            demo_done_date,
+            further_requirement,
             status: 'product-presentation'
         }
     },
@@ -217,16 +265,20 @@ export const hotLead = async ({
         userId
     },
     body: {
-        students_count,
-        schoolId
+        interestedClasses,
+        schoolId,
+        product
     }
 }) => {
-    console.log(students_count, 'students count');
+    const students_count = interestedClasses.map(classValue => ({ class: classValue, count: null }));
+
+    console.log(students_count, 'students count',interestedClasses);
     const updateSchool = await School.findByIdAndUpdate(
         { _id: schoolId }, {
         $set: {
             students_count,
             status: 'hot-lead',
+            product,
             lead: true,
             lost: false
         }
@@ -249,28 +301,35 @@ export const proposalSinged = async ({
     },
     body: {
         schoolId,
-        PO_Signed_By,
-        Rate,
-        parent_orientation_date,
+        price_for_classed,
+        total_deal_year1,
+        total_deal_year2,
+        total_deal_year3,
+        data
     },
     file
 }) => {
-    console.log(schoolId, PO_Signed_By,
-        Rate,
-        parent_orientation_date,
-        file);
+    console.log(data,' datata');
+    const formattedData = data.map(item => ({
+        class: item.class,
+        count: item.count
+    }));
+    console.log(formattedData,' formataeed');
 
     if(file){
         try {
             const url = await uploadToS3(file);
-            console.log(url,' urlllllllleeeee');
             if(url){
                 const updateSchool = await School.findByIdAndUpdate(
                     { _id: schoolId }, {
                     $set: {
-                        PO_signedBy: PO_Signed_By,
-                        Parent_Orientation_Date: parent_orientation_date,
-                        Rate,
+                        students_count: formattedData,
+                        Price_for_class:price_for_classed,
+                        total_deal:{
+                            year1:total_deal_year1,
+                            year2:total_deal_year2,
+                            year3:total_deal_year3,
+                        },
                         PO_scan_copy: url,
                         status: 'proposal-signed'
                     }
@@ -295,6 +354,10 @@ export const proposalSinged = async ({
             }
         } catch (error) {
             console.log(error,' iside file updalod to aws');
+            throw{
+                status:500,
+                message:`Internal server error ${error.message}`
+            }
         }
         
     }else{
@@ -312,6 +375,8 @@ export const parentOrientation = async ({
     },
     body: {
         PO_done_date,
+        Parent_Orientation_Done_By,
+        Parents_attended,
         schoolId
     }
 }) => {
@@ -319,6 +384,8 @@ export const parentOrientation = async ({
         { _id: schoolId }, {
         $set: {
             Parent_Orientation_Done_Date: PO_done_date,
+            Parent_Orientation_Done_By,
+            Parents_attended,
             status: 'parent-orientation'
         }
     },
@@ -343,29 +410,55 @@ export const contractSinged = async ({
     },
     body: {
         schoolId,
-        Contract_signed_date
-    }
-}) => {
-    const updateSchool = await School.findByIdAndUpdate(
-        { _id: schoolId }, {
-        $set: {
-            Contract_signed_date,
-            status: 'contract-signed'
-        }
+        Boarding_student_count,
+        Boarding_meeting_date
     },
-        { new: true }
-    )
-
-    const details = await School.findById(schoolId)
-    const user = await User.findById(userId)
-    const sendingMail = await sendMail('contract-signed', contractSignedEmailTemplate(details.name, user.first_name))
-
-    if (updateSchool && sendingMail.isSend) {
-        return true
-    } else throw {
-        status: 404,
-        message: 'Error occured while saving data'
-    }
+    file
+}) => {
+    if(file){
+        try {
+            const url = await uploadToS3(file);
+            if(url){
+                const updateSchool = await School.findByIdAndUpdate(
+                    { _id: schoolId }, {
+                    $set: {
+                        Contract_signed_copy:url,
+                        Boarding_student_count,
+                        Boarding_meeting_date, 
+                        status:'contract-signed'
+                    }
+                },
+                    { new: true }
+                )
+                const details = await School.findById(schoolId)
+                const user = await User.findById(userId)
+                const sendingMail = await sendMail('contract-signed', contractSignedEmailTemplate(details.name,details, user.first_name))
+                if (updateSchool && sendingMail.isSend) {
+                    return true
+                } else throw {
+                    status: 404,
+                    message: 'Error occured while saving data'
+                }
+            }else {
+                throw{
+                    status:400,
+                    message:'Error uploading to bucket'
+                }
+            }
+        } catch (error) {
+            console.log(error,' iside file updalod to aws');
+            throw{
+                status:500,
+                message:`Internal server error ${error.message}`
+            }
+        }
+        
+    }else{
+        throw{
+            status:400,
+            message:'No file present'
+        } 
+    }   
 }
 
 export const lostSchool = async ({
@@ -374,7 +467,8 @@ export const lostSchool = async ({
     },
     body: {
         schoolId,
-        remarks
+        remarks,
+        next_year_prospect
     }
 }) => {
     const updateSchool = await School.findByIdAndUpdate(
@@ -384,6 +478,7 @@ export const lostSchool = async ({
                 lost: true,
                 remarks,
                 lead: false,
+                next_year_prospect,
                 status: "lost"
             }
         }
@@ -397,6 +492,18 @@ export const lostSchool = async ({
         status: 404,
         message: 'Error occured while saving data'
     }
+}
+
+export const getClasses = async({
+    query:{
+        schoolId
+    }
+})=>{
+    console.log(schoolId, 'sindeideeeeeds get calssses');
+    const school = await School.findById(schoolId);
+    const classes = school.students_count.map(count =>count.class)
+    console.log(classes,'classess insde fet ckasees');
+    return classes
 }
 export const getSchools = async ({
     user: {

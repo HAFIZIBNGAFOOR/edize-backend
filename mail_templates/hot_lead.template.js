@@ -19,9 +19,11 @@ export const hotLeadEmailTemplate = (details, schoolName, username) => `
 <body>
     <h2>Subject: Hot Lead</h2>
     <p>${username} has obtained a Hot Lead with ${schoolName}. Here are the following details:</p>
+    <p><strong>Product:</strong> ${details.product}<strong></p>
+    <h3>Classes</h3>
     <ul>
-        ${details.students_count.map(studentCount => `
-            <li><strong>Class:</strong> ${studentCount.class}, <strong>Count:</strong> ${studentCount.count}</li>
+        ${details.students_count.map(participant => `
+        <li>${participant.class}</li>
         `).join('')}
     </ul>
     <p>Best Regards,</p>

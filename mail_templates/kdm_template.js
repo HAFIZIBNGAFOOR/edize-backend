@@ -23,6 +23,11 @@ export const kdmMeetingEmailTemplate = (kdmDetails, schoolName, username) => `
         <li><strong>KDM Meeting Done Date:</strong> ${kdmDetails.KDM_Meeting_Done_Date}</li>
         <li><strong>Demo Schedule:</strong> ${kdmDetails.demoSchedule ? 'Yes' : 'No'}</li>
         ${kdmDetails.demoSchedule ? `<li><strong>Demo Schedule Date:</strong> ${kdmDetails.demoScheduleDate}</li>` : ''}
+        <ul>
+        ${kdmDetails.facilities_available.map(participant => `
+            <li>${participant}</li>
+        `).join('')}
+    </ul>
     </ul>
     <p>Best Regards,</p>
     <p>${username}</p>

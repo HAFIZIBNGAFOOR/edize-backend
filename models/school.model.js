@@ -68,17 +68,39 @@ const SchoolSchema = new mongoose.Schema({
             {class:String,count:Number}
         ]
     },
+    facilities_available:{
+        type:[String]
+    },
+    support_required:{
+        type:String
+    },
+    demo_attended_by:{
+        type:[String]
+    },
+    demo_done_date:{
+        type:String
+    },
+    further_requirement:{
+        type:String
+    },
+    product:{
+        type:String
+    },
     proposal_signed:{
         type:Boolean
     },
     PO_scan_copy:{
         type:String
     },
-    PO_signedBy:{
+    Price_for_class:{
         type:String
     },
-    Rate:{
-        type:String
+    total_deal:{
+        type:{
+            year1:String,
+            year2:String,
+            year3:String
+        }
     },
     Parent_Orientation_Date:{
         type:String
@@ -86,7 +108,22 @@ const SchoolSchema = new mongoose.Schema({
     Parent_Orientation_Done_Date:{
         type:String
     },
+    Parent_Orientation_Done_By:{
+        type:String
+    },
+    Parents_attended:{
+        type:String
+    },
     Contract_signed_date:{
+        type:String
+    },
+    Contract_signed_copy:{
+        type:String
+    },
+    Boarding_student_count:{
+        type:String
+    },
+    Boarding_meeting_date:{
         type:String
     },
     userId:{
@@ -102,6 +139,9 @@ const SchoolSchema = new mongoose.Schema({
         type:Boolean
     },
     remarks:{
+        type:String
+    },
+    next_year_prospect:{
         type:String
     }
 },

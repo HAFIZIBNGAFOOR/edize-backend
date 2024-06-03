@@ -1,4 +1,4 @@
-export const lostEmailTemplate = (details, schoolName, username) => `
+export const productDemoEmailTemplate = (details, schoolName, username) => `
 <html>
 <head>
     <style>
@@ -17,11 +17,10 @@ export const lostEmailTemplate = (details, schoolName, username) => `
     </style>
 </head>
 <body>
-    <h2>Subject: Lost</h2>
-    <p>${username} has Lost ${schoolName}. Here are the following details:</p>
+    <h2>Subject: Product Demo Sheduled </h2>
+    <p>${username} has scheduled product demo with ${schoolName}. Here are the following details:</p>
     <ul>
-        <li><strong>Lost Remarks:</strong> ${details.remarks}</li>
-        <li><strong>Prospect for Next Year :</strong> ${details.next_year_prospect}</li>
+        <li><strong>Support required from expert team:</strong> ${details.support_required}</li>
     </ul>
     <p>Best Regards,</p>
     <p>${username}</p>
