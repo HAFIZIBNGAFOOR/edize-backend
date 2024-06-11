@@ -1,13 +1,10 @@
 import mongoose from "mongoose";
 
-const userModel = new mongoose.Schema(
+const managerModel = new mongoose.Schema(
     {
-        first_name:{
+        name:{
             type:String,
             required:true
-        },
-        last_name:{
-            type:String,
         },
         password:{
             type:String,
@@ -22,17 +19,11 @@ const userModel = new mongoose.Schema(
             type:String
         },
         phone:{
-            required:true,
             type:String
         },
         isBlocked:{
             default:false,
             type:Boolean
-        },
-        manager:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'Manager',
-            required:true
         },
         isVerified:{
             default:false,
@@ -40,10 +31,9 @@ const userModel = new mongoose.Schema(
         },
         role:{
             type:String,
-            required:true
         }
     },
     {timestamps:true,timeseries:true} 
 );
 
-export const User = mongoose.model('User',userModel)
+export const Manager = mongoose.model('Manager',managerModel)

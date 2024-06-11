@@ -10,9 +10,17 @@ export const doSignup = async ({
         password,
         email,
         district,
-        phone
+        phone, 
+        manager
     }
 })=>{
+    console.log(first_name,
+        last_name,
+        password,
+        email,
+        district,
+        phone, 
+        manager,' bodyyyyyyyyy');
     if(!first_name){
         throw {
             status:400,
@@ -48,6 +56,12 @@ export const doSignup = async ({
             status:400,
             message:'password is required'
         }
+    } 
+    if(!manager){
+        throw {
+            status:400,
+            message:'manager is required'
+        }
     }
     const userExist = await User.findOne({
         $or:[
@@ -77,7 +91,8 @@ export const doSignup = async ({
         password:hashPassword,
         district,
         phone  ,
-        role:'User'      
+        role:'User',
+        manager     
      })
      return true
 }

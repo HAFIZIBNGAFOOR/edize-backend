@@ -2,12 +2,12 @@ const recipients = {
     'prospect' :['suraj@edize.in'],
     'appointment' :['suraj@edize.in'],
     'kdm':['suraj@edize.in'],
-    'product-demo':['suraj@edize.in'],
-    'product-presentation':['suraj@edize.in'],
+    'product-demo':['suraj@edize.in','pratheekhas@edize.in'],
+    'product-presentation':['suraj@edize.in','pratheekhas@edize.in'],
     'hot-lead':['suraj@edize.in','sarath@edize.in'],
-    'proposal-signed':['suraj@edize.in','sarath@edize.in','nisam@edize.in'],
-    'parent-orientation':['suraj@edize.in','sarath@edize.in','nisam@edize.in'],
-    'contract-signed':['suraj@edize.in','sarath@edize.in','nisam@edize.in'],
+    'proposal-signed':['suraj@edize.in','sarath@edize.in','pratheekhas@edize.in','amrutha@edize.in'],
+    'parent-orientation':['suraj@edize.in','sarath@edize.in','pratheekhas@edize.in'],
+    'contract-signed':['suraj@edize.in','sarath@edize.in','pratheekhas@edize.in','amrutha@edize.in'],
     'lost':['suraj@edize.in','sarath@edize.in']
 }
 import dotenv from "dotenv";
