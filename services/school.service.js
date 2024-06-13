@@ -117,14 +117,6 @@ export const appointment = async ({
         schoolId
     }
 }) => {
-    console.log(userId, ' user id',
-        KDM_Designation,
-        KDM_Name,
-        KDM_Mobile_Number,
-        KDM_Meeting_time,
-        city_of_school,
-        schoolId
-    )
     const updateSchool = await School.findByIdAndUpdate({ _id: schoolId },
         {
             $set: {
