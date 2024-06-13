@@ -542,10 +542,11 @@ export const getAllSchools = async({
     }
 })=>{
     if(roleId!=='Admin'){
-        const allSchools = await School.find({userId}) 
+        const allSchools = await School.find({userId})
         return allSchools
     }else{
-        const allSchools = await School.find()
+        const allSchools = await School.find().populate('userId') 
+        console.log(allSchools,'hadnad')
         return allSchools
     }
     
