@@ -4,6 +4,7 @@ import { userRouter } from './user.route.js';
 import auth from '../auth/auth.js';
 // import { auth2CallBack } from '../services/nodemailer.service.js';
 import { managerRouter } from './manager.route.js';
+
 const router = express.Router();
 
 router.use('/school',auth(),schoolRouter)

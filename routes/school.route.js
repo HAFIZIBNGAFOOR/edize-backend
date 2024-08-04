@@ -1,37 +1,39 @@
 import express from 'express'
 import controller from '../controllers/common.controller.js';
-import { addSchool, appointment, contractSinged, getAllSchools, getClasses, getSchools, hotLead, kdmMeeting, lostSchool, parentOrientation, product_demo, product_presentation, proposalSinged, singleSchool } from '../services/school.service.js';
+import { addSchool, appointment, contractSinged, deleteSchool, getAllSchools, getClasses, getSchools, hotLead, kdmMeeting, lostSchool, parentOrientation, product_demo, product_presentation, proposalSinged, singleSchool } from '../services/school.service.js';
 import upload from '../middlewares/multer.js';
 
 const router = express.Router();
 
-router.post('/',controller(addSchool));
-router.get('/',controller(getSchools))
+router.post('/', controller(addSchool));
 
-router.get('/allSchools',controller(getAllSchools))
+router.get('/', controller(getSchools))
 
-router.get('/single-school',controller(singleSchool))
+router.get('/allSchools', controller(getAllSchools))
 
-router.get('/classes',controller(getClasses))
+router.get('/single-school', controller(singleSchool))
 
-router.post('/appointment',controller(appointment))
+router.get('/classes', controller(getClasses))
 
-router.post('/kdm',controller(kdmMeeting))
+router.post('/appointment', controller(appointment))
 
-router.post('/product-demo',controller(product_demo))
+router.post('/kdm', controller(kdmMeeting))
 
-router.post('/product-presentation',controller(product_presentation))
+router.post('/product-demo', controller(product_demo))
 
-router.post('/hot-lead',controller(hotLead))
+router.post('/product-presentation', controller(product_presentation))
 
-router.post('/proposal-signed',upload.single('file'),controller(proposalSinged))
+router.post('/hot-lead', controller(hotLead))
 
-router.post('/parent-orientation',controller(parentOrientation))
+router.post('/proposal-signed', upload.single('file'), controller(proposalSinged))
 
-router.post('/contract-signed',upload.single('file'),controller(contractSinged))
+router.post('/parent-orientation', controller(parentOrientation))
 
-router.post('/lost',controller(lostSchool))
+router.post('/contract-signed', upload.single('file'), controller(contractSinged))
 
+router.post('/lost', controller(lostSchool))
+
+router.put('/delete/:schoolId', controller(deleteSchool))
 
 
 export const schoolRouter = router

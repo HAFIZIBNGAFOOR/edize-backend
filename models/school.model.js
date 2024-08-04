@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import mongoose_Sequence from "mongoose-sequence"
 
+
 const AutoIncrementFactory =  mongoose_Sequence(mongoose)
 const SchoolSchema = new mongoose.Schema({
     status:{
@@ -17,7 +18,7 @@ const SchoolSchema = new mongoose.Schema({
     },
     address:{
         type:String
-    },
+    },  
     district:{
         type:String
     },
@@ -132,7 +133,7 @@ const SchoolSchema = new mongoose.Schema({
     },
     lost:{
         type:Boolean,
-        deafult:false
+        default:false
     },
     lead:{
         default:false,
@@ -143,9 +144,17 @@ const SchoolSchema = new mongoose.Schema({
     },
     next_year_prospect:{
         type:String
+    },
+    deletedAt:{
+        type: String,
+        default:null
     }
 },
 {timestamps:true,timeseries:true} )
+
+SchoolSchema.pre('find', function () {
+  this.where({ deletedAt: null });
+});
 
 
 SchoolSchema.plugin(AutoIncrementFactory, { inc_field: 'SchoolId', start_seq: 101 });

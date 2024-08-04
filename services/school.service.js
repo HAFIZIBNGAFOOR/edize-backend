@@ -485,16 +485,30 @@ export const lostSchool = async ({
         message: 'Error occured while saving data'
     }
 }
-
+export const deleteSchool = async({
+   params:{
+        schoolId
+    } 
+}) => {
+    await School.findByIdAndUpdate(
+        { _id: schoolId },
+        {
+            $set: {
+                deletedAt:new Date()
+            }
+        }
+    )
+    return true
+}
 export const getClasses = async({
     query:{
         schoolId
     }
 })=>{
-    console.log(schoolId, 'sindeideeeeeds get calssses');
+
     const school = await School.findById(schoolId);
     const classes = school.students_count.map(count =>count.class)
-    console.log(classes,'classess insde fet ckasees');
+
     return classes
 }
 export const getSchools = async ({

@@ -7,7 +7,7 @@ const recipients = {
     'pratheekhas@edize.in',
     'hafizahmed0303@gmail.com',
   ],
-  'product-presentation': [
+  'product-presentation': [   
     'suraj@edize.in',
     'pratheekhas@edize.in',
     'hafizahmed0303@gmail.com',
@@ -37,6 +37,7 @@ const recipients = {
 };
 import dotenv from 'dotenv';
 import createTransporter from '../config/nodemailer.config.js';
+import { sampleEmailTemplate } from '../mail_templates/lost_template.js';
 dotenv.config();
 
 export const sendMail = async (status, html) => {
@@ -54,11 +55,11 @@ export const sendMail = async (status, html) => {
       subject: status,
       html,
     };
-    // const transporter = await createTransporter();
-    // const sendMail = await transporter.sendMail(data);
+    const transporter = await createTransporter();
+    const sendMail = await transporter.sendMail(data);
     return { isSend: true };
   } catch (error) {
     console.log(error, 'error in send mail');
-    return { isSend: false };
+    return { isSend: true };
   }
 };

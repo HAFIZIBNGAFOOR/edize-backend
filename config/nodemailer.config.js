@@ -17,7 +17,15 @@ const createTransporter = async()=>{
         oauth2Client.setCredentials({
             refresh_token: process.env.GOOGLE_OAUTH_REFRESH_TOKEN,
         });
-        const accessToken = await  oauth2Client.getAccessToken();
+        const accessToken = await new Promise((resolve, reject) => {
+         oauth2Client.getAccessToken((err, token) => {
+           if (err) {
+             console.log("*ERR: ", err)
+             reject();
+           }
+           resolve(token); 
+         });
+       });
           const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {

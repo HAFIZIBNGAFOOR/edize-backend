@@ -28,3 +28,28 @@ export const lostEmailTemplate = (details, schoolName, username) => `
 </body>
 </html>
 `;
+export const sampleEmailTemplate = () => `
+<html>
+<head>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            font-family: Arial, sans-serif;
+        }
+        h2 {
+            margin: 0;
+        }
+        p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>Subject: Testing</h2>
+    <p>Sample testing mail success</p>
+   
+</body>
+</html>
+`;
