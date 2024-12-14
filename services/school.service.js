@@ -26,8 +26,9 @@ export const addSchool = async ({
         phone
     }
 }) => {
-    const user =await User.findById(userId)
-    if(user.isVerified == false || user.isVerified == undefined){
+    const user = await User.findById(userId)
+    console.log(user);
+    if( user.isVerified == undefined || user.isVerified == false ){
         throw {
             message:'User is Not verified',
             status:404
@@ -229,7 +230,7 @@ export const product_presentation = async ({
         further_requirement
     }
 }) => {
-    console.log(participated_members,' sfmnedebooenononsnfd',demo_done_date)
+
     const updateSchool = await School.findByIdAndUpdate(
         { _id: schoolId }, {
         $set: {
@@ -264,7 +265,6 @@ export const hotLead = async ({
 }) => {
     const students_count = interestedClasses.map(classValue => ({ class: classValue, count: null }));
 
-    console.log(students_count, 'students count',interestedClasses);
     const updateSchool = await School.findByIdAndUpdate(
         { _id: schoolId }, {
         $set: {
@@ -284,7 +284,7 @@ export const hotLead = async ({
         return true
     } else throw {
         status: 404,
-        message: 'Error occured while saving data'
+        message: 'Error occurred while saving data'
     }
 }
 export const proposalSinged = async ({
@@ -301,12 +301,10 @@ export const proposalSinged = async ({
     },
     file
 }) => {
-    console.log(data,' datata');
     const formattedData = data.map(item => ({
         class: item.class,
         count: item.count
     }));
-    console.log(formattedData,' formataeed');
 
     if(file){
         try {
@@ -391,10 +389,9 @@ export const parentOrientation = async ({
         return true
     } else throw {
         status: 404,
-        message: 'Error occured while saving data'
+        message: 'Error occurred while saving data'
     }
 }
-
 
 export const contractSinged = async ({
     user: {
@@ -582,3 +579,346 @@ export const singleSchool = async ({
         }
     }
 }  
+
+
+export const updateSchool = async ({
+    user: {
+        userId
+    },
+    params: {
+      schoolId  
+    },
+    body: {
+        school_name,
+        Address,
+        district,
+        state,
+        udise,
+        phone,
+    }
+}) => {
+    console.log(user);
+    const school = await School.findByIdAndUpdate({_id: schoolId }, {
+        $set: {
+            name: school_name,
+            address: Address,
+            district,
+            state,
+            UDSE_Number: udise,
+            phone,
+            schoolUpdate: true
+        }
+    })
+    return true
+};
+
+export const updateAppointment = async ({
+    params: {
+        schoolId
+    },
+    body: {
+        KDM_Designation,
+        KDM_Name,
+        KDM_Mobile_Number,
+        KDM_Meeting_time,
+        city_of_school,
+        
+    }
+}) => {
+    const updateSchool = await School.findByIdAndUpdate({ _id: schoolId },
+        {
+            $set: {
+                KDM_Name,
+                KDM_Designation,
+                KDM_Meeting_time,
+                KDM_Mobile_Number,
+                city_of_school,
+                appointmentUpdate:true
+            }
+        }
+    )
+       return true
+
+}
+
+export const updateKdmMeeting = async ({
+    params: {
+        schoolId
+    },
+    body: {
+        Meeting_done_date,
+        demoOption,
+        Demo_schedule_date,
+        smartClassRooms,
+        smartStudio,
+        schoolInternet
+    }
+}) => {
+    const demoB = Boolean(demoOption)
+    console.log(smartClassRooms,smartStudio,schoolInternet);
+
+    const facilities_available = []
+    if(smartClassRooms){
+        facilities_available.push('Smart Class Rooms')
+    }
+    if(smartStudio){
+        facilities_available.push('Smart Studio')
+    }
+    if(schoolInternet){
+        facilities_available.push('School Internet')
+    }
+    const updateSchool = await School.findByIdAndUpdate(
+        { _id: schoolId }, {
+        $set: {
+            KDM_Meeting_Done_Date: Meeting_done_date,
+            demo: demoB,
+            Demo_schedule_date,
+            facilities_available,
+            kdmMeetingUpdate:true
+        }
+    })
+    return true
+}
+
+export const updateProduct_demo= async({
+    params: {
+        schoolId
+    },
+    body: {
+        support_required,
+    }  
+})=>{ 
+    const updateSchool = await School.findByIdAndUpdate(
+        { _id: schoolId }, {
+        $set: {
+            support_required,
+            product_demoUpdate:true
+        }
+    }
+    )
+    return true
+}
+
+export const updateProduct_presentation = async ({
+    params: {
+        schoolId,
+    },
+    body: {
+        participated_members,
+        demo_done_date,
+        further_requirement
+    }
+}) => {
+
+    const updateSchool = await School.findByIdAndUpdate(
+        { _id: schoolId }, {
+        $set: {
+            demo_attended_by: participated_members,
+            demo_done_date,
+            further_requirement,
+            product_presentationUpdate:true
+        }
+    },
+        { new: true }
+    )
+    return true
+}
+
+export const updateHotLead = async ({
+    params: {
+        schoolId,
+    },
+    body: {
+        interestedClasses,
+        product
+    }
+}) => {
+    const students_count = interestedClasses.map(classValue => ({ class: classValue, count: null }));
+
+    const updateSchool = await School.findByIdAndUpdate(
+        { _id: schoolId }, {
+        $set: {
+            students_count,
+            product,
+            lead: true,
+            lost: false,
+            hotLeadUpdate:true
+        }
+    },
+    )
+    return true
+}
+
+export const updateProposalSinged = async ({
+    params: {
+        schoolId
+    },
+    body: {
+        schoolId,
+        price_for_classed,
+        total_deal_year1,
+        total_deal_year2,
+        total_deal_year3,
+        data
+    },
+    file
+}) => {
+    const formattedData = data.map(item => ({
+        class: item.class,
+        count: item.count
+    }));
+
+    if(file){
+        try {
+            const url = await uploadToS3(file);
+            if(url){
+                const updateSchool = await School.findByIdAndUpdate(
+                    { _id: schoolId }, {
+                    $set: {
+                        students_count: formattedData,
+                        Price_for_class:price_for_classed,
+                        total_deal:{
+                            year1:total_deal_year1,
+                            year2:total_deal_year2,
+                            year3:total_deal_year3,
+                        },
+                        PO_scan_copy: url,
+                        proposalSingedUpdate:true
+                    }
+                }
+                )
+            return true   
+            }else {
+                throw{
+                    status:400,
+                    message:'Error uploading to bucket'
+                }
+            }
+        } catch (error) {
+            console.log(error,' iside file updalod to aws');
+            throw{
+                status:500,
+                message:`Internal server error ${error.message}`
+            }
+        }
+        
+    }else{
+         const updateSchool = await School.findByIdAndUpdate(
+             { _id: schoolId },
+             {
+                    $set: {
+                        students_count: formattedData,
+                        Price_for_class:price_for_classed,
+                        total_deal:{
+                            year1:total_deal_year1,
+                            year2:total_deal_year2,
+                            year3:total_deal_year3,
+                        },
+                        proposalSingedUpdate:true
+                    }
+                }
+                )
+            return true  
+    }   
+    
+}
+
+export const updateParentOrientation = async ({
+    params: {
+        schoolId
+    },
+    body: {
+        PO_done_date,
+        Parent_Orientation_Done_By,
+        Parents_attended,
+    }
+}) => {
+    const updateSchool = await School.findByIdAndUpdate(
+        { _id: schoolId }, {
+        $set: {
+            Parent_Orientation_Done_Date: PO_done_date,
+            Parent_Orientation_Done_By,
+            Parents_attended,
+            parentOrientationUpdate:true
+        }
+    }
+    )
+   return true
+}
+
+export const updateContractSinged = async ({
+    params: {
+        schoolId,
+    },
+    body: {
+        Boarding_student_count,
+        Boarding_meeting_date
+    },
+    file
+}) => {
+    if(file){
+        try {
+            const url = await uploadToS3(file);
+            if(url){
+                const updateSchool = await School.findByIdAndUpdate(
+                    { _id: schoolId }, {
+                    $set: {
+                        Contract_signed_copy:url,
+                        Boarding_student_count,
+                        Boarding_meeting_date, 
+                        contractSingedUpdate:true
+                    }
+                }
+                )
+                return true
+            }else {
+                throw{
+                    status:400,
+                    message:'Error uploading to bucket'
+                }
+            }
+        } catch (error) {
+            console.log(error,' inside file upload to aws');
+            throw{
+                status:500,
+                message:`Internal server error ${error.message}`
+            }
+        }
+        
+    }else{
+        const updateSchool = await School.findByIdAndUpdate(
+                    { _id: schoolId }, {
+                    $set: {
+                        Boarding_student_count,
+                        Boarding_meeting_date, 
+                        contractSingedUpdate:true
+                    }
+                }
+                )
+                return true
+    }   
+}
+
+export const updateLostSchool = async ({
+    params: {
+        schoolId,
+    },
+    body: {
+        remarks,
+        next_year_prospect
+    }
+}) => {
+    const updateSchool = await School.findByIdAndUpdate(
+        { _id: schoolId },
+        {
+            $set: {
+                lost: true,
+                remarks,
+                lead: false,
+                next_year_prospect,
+                lostSchoolUpdate:true
+            }
+        }
+    )
+    return true
+}

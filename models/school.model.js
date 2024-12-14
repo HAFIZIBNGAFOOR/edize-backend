@@ -145,10 +145,56 @@ const SchoolSchema = new mongoose.Schema({
     next_year_prospect:{
         type:String
     },
+    
     deletedAt:{
         type: String,
         default:null
-    }
+    },
+    schoolUpdate: {
+        type: Boolean,
+        default: false
+    },
+    appointmentUpdate: {
+        type: Boolean,
+        default: false
+    },
+    kdmMeetingUpdate: {
+        type: Boolean,
+        default: false
+    },
+    product_demoUpdate: {
+        type: Boolean,
+        default: false
+    },
+    schoolUpdate: {
+        type: Boolean,
+        default: false
+    },
+    product_presentationUpdate: {
+        type: Boolean,
+        default: false
+    },
+    hotLeadUpdate: {
+        type: Boolean,
+        default: false
+    },
+    proposalSingedUpdate: {
+        type: Boolean,
+        default: false
+    },
+    parentOrientationUpdate: {
+        type: Boolean,
+        default: false
+    },
+    contractSingedUpdate: {
+        type: Boolean,
+        default: false
+    },
+    lostSchoolUpdate: {
+        type: Boolean,
+        default: false
+    },
+
 },
 {timestamps:true,timeseries:true} )
 

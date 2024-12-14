@@ -3,6 +3,7 @@ import controller from '../controllers/common.controller.js';
 import { addSchool, appointment, contractSinged, deleteSchool, getAllSchools, getClasses, getSchools, hotLead, kdmMeeting, lostSchool, parentOrientation, product_demo, product_presentation, proposalSinged, singleSchool } from '../services/school.service.js';
 import upload from '../middlewares/multer.js';
 
+
 const router = express.Router();
 
 router.post('/', controller(addSchool));

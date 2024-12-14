@@ -1,9 +1,10 @@
 import controller from '../controllers/common.controller.js';
-import { getManagers} from '../services/manager.service.js'
+import { addManager, getManagers} from '../services/manager.service.js'
 
 import express from "express"
 const router = express.Router();
 
-router.get('/',controller(getManagers))
+router.get('/', controller(getManagers))
+router.post('/',controller(addManager))
 
 export const managerRouter = router

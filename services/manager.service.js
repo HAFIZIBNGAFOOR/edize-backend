@@ -1,5 +1,6 @@
 import { Manager } from '../models/manager.model.js'
-import bcrypt from "bcrypt"
+import bcrypt from 'bcrypt'
+
 export const getManagers = async()=>{
     const managers = await Manager.find({isBlocked:false})
     console.log(managers);
@@ -15,3 +16,13 @@ export const getManagers = async()=>{
     }
 }
 
+export const addManager = async () => {
+    const hashPassword = await bcrypt.hash("edize@111",10)
+    const managers = {
+        name: "nisam",
+        email: "nisam@edize.in",
+        password:hashPassword
+    }
+    const newManager = new Manager(managers)
+    await newManager.save()
+}

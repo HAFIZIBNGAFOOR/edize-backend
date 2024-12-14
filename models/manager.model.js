@@ -15,7 +15,6 @@ const managerModel = new mongoose.Schema(
             required:true
         },
         district:{
-            required:true,
             type:String
         },
         phone:{
